@@ -96,14 +96,10 @@ download_shunit2() {
 }
 
 run_shunit2() {
-
     debug "test ! -f ${SCRIPT_DIR}/vendor/${SHUNIT2_DIRNAME}/src/shunit2"
     if [[ ! -f ${SCRIPT_DIR}/vendor/${SHUNIT2_DIRNAME}/src/shunit2 ]]; then
-
         read -p 'You must download shunit2 (320K) to run the tests. Download now? [y/n] '
-
         local serialized_reply=`echo ${REPLY} | tr [:upper:] [:lower:]`
-
         case ${serialized_reply}
         in
             y)
@@ -117,7 +113,6 @@ run_shunit2() {
                 sh ${SCRIPT_DIR}/renex -t
                 ;;
         esac
-
     else
         debug 'Running tests'
         sh ${SCRIPT_DIR}/vendor/${SHUNIT2_DIRNAME}/src/shunit2 "${SCRIPT_DIR}/spec.sh"
