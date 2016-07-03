@@ -87,8 +87,8 @@ download_shunit2() {
     debug "rm -f ${SHUNIT2_TB}"
     rm -f ${SHUNIT2_TB}
 
-    debug "test -f ${SCRIPT_DIR}/${SHUNIT2_DIRNAME}/src/shunit2"
-    if [[ -f ${SCRIPT_DIR}/${SHUNIT2_DIRNAME}/src/shunit2 ]]; then
+    debug "test -f ${SCRIPT_DIR}/vendor/${SHUNIT2_DIRNAME}/src/shunit2"
+    if [[ -f ${SCRIPT_DIR}/vendor/${SHUNIT2_DIRNAME}/src/shunit2 ]]; then
         log "Installed shunit2 to vendor/${SHUNIT2_DIRNAME}"
 
         debug "cd .."
