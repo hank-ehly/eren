@@ -1,0 +1,12 @@
+
+    Usage:
+            -h             : help
+            -r             : recursive
+            -t             : run unit tests
+            -v             : verbose
+            -o <extension> : specify .old extension
+            -n <extension> : specify .new extension
+
+    Example: $ renex -r -v -o php -n html src/
+             # Recursively rename all .php to .html in src folder
+

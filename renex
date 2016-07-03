@@ -14,18 +14,7 @@ SHUNIT2_TB='shunit2-2.1.6.tgz'
 SHUNIT2_DIRNAME="`echo ${SHUNIT2_TB} | sed s/.tgz//`"
 
 usage() {
-    echo '
-    Usage:
-            -h             : help
-            -r             : recursive
-            -t             : run unit tests
-            -v             : verbose
-            -o <extension> : specify .old extension
-            -n <extension> : specify .new extension
-
-    Example: $ renex -r -v -o php -n html src/
-             # Recursively rename all .php to .html in src folder
-    '
+    cat ${SCRIPT_DIR}/USAGE
     exit 0
 }
 
