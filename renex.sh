@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 
 sflags=''
-LOGFILE="`pwd`/.renexlog"
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+LOGFILE="${SCRIPT_DIR}/.renexlog"
 
 SHUNIT2_DL='https://storage.googleapis.com/google-code-archive-downloads/v2/code.google.com/shunit2/shunit2-2.1.6.tgz'
 SHUNIT2_TB='shunit2-2.1.6.tgz'
@@ -125,7 +126,7 @@ run_shunit2() {
 
     else
         debug 'Running tests'
-        sh ./vendor/${SHUNIT2_DIRNAME}/src/shunit2 `pwd`/spec.sh
+        sh ./vendor/${SHUNIT2_DIRNAME}/src/shunit2 "${SCRIPT_DIR}/spec.sh"
     fi
 }
 
