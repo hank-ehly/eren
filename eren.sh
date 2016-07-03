@@ -1,7 +1,11 @@
 #!/bin/bash
 
+LOGFILE="`pwd`/.erenlog"
+
 SHUNIT2_DL='https://storage.googleapis.com/google-code-archive-downloads/v2/code.google.com/shunit2/shunit2-2.1.6.tgz'
 SHUNIT2_TB='shunit2-2.1.6.tgz'
+SHUNIT2_DIRNAME="`echo ${SHUNIT2_TB} | sed s/.tgz//`"
+
 VERBOSE='no'
 RUN_TESTS='no'
 
@@ -32,16 +36,16 @@ clog() {
 
     case ${color} in
         black)
-            echo "\033[0m${log}\033[0m" && echo ${log} >> ./.erenlog
+            echo "\033[0m${log}\033[0m" && echo ${log} >> ${LOGFILE}
             ;;
         blue)
-            echo "\033[0;34m${log}\033[0m" && echo ${log} >> ./.erenlog
+            echo "\033[0;34m${log}\033[0m" && echo ${log} >> ${LOGFILE}
             ;;
         red)
-            echo "\033[0;31m${log}\033[0m" && echo ${log} >> ./.erenlog
+            echo "\033[0;31m${log}\033[0m" && echo ${log} >> ${LOGFILE}
             ;;
         yellow)
-            echo "\033[0;33m${log}\033[0m" && echo ${log} >> ./.erenlog
+            echo "\033[0;33m${log}\033[0m" && echo ${log} >> ${LOGFILE}
             ;;
         *)
             clog black "${2}"
@@ -85,9 +89,9 @@ download_shunit2() {
     debug "rm -f ${SHUNIT2_TB}"
     rm -f ${SHUNIT2_TB}
 
-    debug "test -f ./shunit2-2.1.6/src/shunit2"
-    if [[ -f ./shunit2-2.1.6/src/shunit2 ]]; then
-        log 'Installation successful.'
+    debug "test -f ./${SHUNIT2_DIRNAME}/src/shunit2"
+    if [[ -f ./${SHUNIT2_DIRNAME}/src/shunit2 ]]; then
+        log "Installed shunit2 to vendor/${SHUNIT2_DIRNAME}"
 
         debug "cd .."
         cd ..
@@ -101,8 +105,8 @@ download_shunit2() {
 
 run_shunit2() {
 
-    debug "test ! -f ./vendor/shunit2-2.1.6/src/shunit2"
-    if [[ ! -f ./vendor/shunit2-2.1.6/src/shunit2 ]]; then
+    debug "test ! -f ./vendor/${SHUNIT2_DIRNAME}/src/shunit2"
+    if [[ ! -f ./vendor/${SHUNIT2_DIRNAME}/src/shunit2 ]]; then
 
         read -p 'You must download shunit2 (320K) to run the tests. Download now? [y/n] '
 
@@ -123,7 +127,7 @@ run_shunit2() {
 
     else
         debug 'Running tests'
-        sh ./vendor/shunit2-2.1.6/src/shunit2 ${BASH_SOURCE[0]}
+        sh ./vendor/${SHUNIT2_DIRNAME}/src/shunit2 ${BASH_SOURCE[0]}
     fi
 }
 
