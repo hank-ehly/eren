@@ -1,6 +1,6 @@
 #!/bin/bash
 
-LOGFILE="`pwd`/.erenlog"
+LOGFILE="`pwd`/.renexlog"
 
 SHUNIT2_DL='https://storage.googleapis.com/google-code-archive-downloads/v2/code.google.com/shunit2/shunit2-2.1.6.tgz'
 SHUNIT2_TB='shunit2-2.1.6.tgz'
@@ -23,7 +23,7 @@ usage() {
             -o <extension> : specify .old extension
             -n <extension> : specify .new extension
 
-    Example: $ eren -r -v -o php -n html src/
+    Example: $ renex -r -v -o php -n html src/
              # Recursively rename all .php to .html in src folder
     '
     exit 0
@@ -103,8 +103,8 @@ download_shunit2() {
         debug "cd .."
         cd ..
 
-        debug "sh ./eren.sh -t"
-        sh ./eren.sh -t
+        debug "sh ./renex.sh -t"
+        sh ./renex.sh -t
     else
         error 'Installation failed. Exiting.'
     fi
@@ -129,7 +129,7 @@ run_shunit2() {
                 ;;
             *)
                 warn "Invalid option ${opt}."
-                sh ./eren.sh -t
+                sh ./renex.sh -t
                 ;;
         esac
 
@@ -177,7 +177,7 @@ tearDown() {
 }
 
 test_rename_single_file() {
-    sh eren.sh -v -o php -n html fixtures/foo.php
+    sh renex.sh -v -o php -n html fixtures/foo.php
 
     assertTrue '[[ -e fixtures/foo.html ]]'
     assertFalse '[[ -e fixtures/foo.php ]]'
@@ -186,7 +186,7 @@ test_rename_single_file() {
 }
 
 test_rename_files_in_dir_non_recursive() {
-    sh eren.sh -v -o php -n html fixtures/
+    sh renex.sh -v -o php -n html fixtures/
 
     assertTrue '[[ -e fixtures/foo.html ]]'
     assertTrue '[[ -e fixtures/bar.html ]]'
@@ -205,7 +205,7 @@ test_rename_files_in_dir_non_recursive() {
 }
 
 test_rename_files_recursively() {
-    sh eren.sh -vr -o php -n html fixtures/
+    sh renex.sh -vr -o php -n html fixtures/
 
     assertTrue '[[ -e fixtures/foo.html ]]'
     assertTrue '[[ -e fixtures/bar.html ]]'
@@ -238,49 +238,34 @@ test_rename_files_recursively() {
     assertFalse '[[ -e fixtures/level1/level2/baz.php ]]'
 }
 
-eren() {
-
+renex() {
     if [[ -d ${3} ]]; then
-
         local serialized_dirname=`echo ${3} | sed 's/\/$//'`
-
         if echo ${sflags} | grep 'r' >/dev/null; then
-
             for file in ${serialized_dirname}/*
             do
                 if [[ -d ${file} ]]; then
-
-                    debug "Going into ${file}"
-                    eren ${1} ${2} ${file}
-
+                    debug "Entering ${file}"
+                    renex ${1} ${2} ${file}
                 elif echo ${file} | grep ".${1}" >/dev/null; then
-
                     debug "mv ${file} `echo ${file} | cut -d. -f1`.${2}"
                     mv ${file} `echo ${file} | cut -d. -f1`.${2}
-
                 else
                     debug "Skipped ${file}"
                 fi
             done
-
         else
-
-            # non-recursive dir
             for file in ${serialized_dirname}/*.${1}
             do
                 debug "mv ${file} `echo ${file} | cut -d. -f1`.${2}"
                 mv ${file} `echo ${file} | cut -d. -f1`.${2}
             done
-
         fi
     fi
-
     if [[ -f ${3} ]]; then
         mv ${3} `echo ${3} | cut -d. -f1`.${2}
     fi
 }
-
-
 
 args=`getopt hn:o:rtv $*`
 
@@ -328,5 +313,5 @@ if [[ ! -z ${1} ]] && [[ ! -f ${1} ]] && [[ ! -d ${1} ]]; then
 fi
 
 if [[ ! -z ${oarg} ]] && [[ ! -z ${narg} ]] && [[ -e ${1} ]]; then
-    eren ${oarg} ${narg} ${1}
+    renex ${oarg} ${narg} ${1}
 fi

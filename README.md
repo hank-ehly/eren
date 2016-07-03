@@ -1,4 +1,4 @@
-### eren (e)asy (ren)ame
+### renex (ren)ame (ex)tension
 
 A bash script for easily renaming file extensions
 
@@ -10,5 +10,5 @@ A bash script for easily renaming file extensions
             -o <extension> : specify .old extension
             -n <extension> : specify .new extension
 
-    Example: $ eren -r -v -o php -n html src/
+    Example: $ renex -r -v -o php -n html src/
              # Recursively rename all .php to .html in src folder
