@@ -47,7 +47,7 @@ clog() {
             echo "\033[0;34m${log}\033[0m" && echo ${log} >> ${LOGFILE}
             ;;
         red)
-            echo "\033[0;31m${log}\033[0m" && echo ${log} >> ${LOGFILE}
+            echo "\033[1;31m${log}\033[0m" && echo ${log} >> ${LOGFILE}
             ;;
         yellow)
             echo "\033[0;33m${log}\033[0m" && echo ${log} >> ${LOGFILE}
@@ -109,7 +109,6 @@ download_shunit2() {
 }
 
 run_shunit2() {
-
     debug "test ! -f ./vendor/${SHUNIT2_DIRNAME}/src/shunit2"
     if [[ ! -f ./vendor/${SHUNIT2_DIRNAME}/src/shunit2 ]]; then
 
@@ -142,19 +141,19 @@ eren() {
 
     if [[ -d ${3} ]]; then
 
-        local serialized_dirname = echo ${3} | sed 's/\///'
+        local serialized_dirname=`echo ${3} | sed 's/\///'`
 
         if echo ${sflags} | grep 'r'; then
 
-            # recursive dir
-            for file in ${serialized_dirname}/*.${1}
-            do
-                if [[ -d $file ]]; then
-                    eren $1 $2 $file
-                else
-                    mv $file `echo $file | cut -d. -f1`.${2}
-                fi
-            done
+#            # recursive dir
+#            for file in ${serialized_dirname}/*.${1}
+#            do
+#                if [[ -d $file ]]; then
+#                    eren $1 $2 $file
+#                else
+#                    mv $file `echo $file | cut -d. -f1`.${2}
+#                fi
+#            done
 
         else
 
@@ -206,12 +205,16 @@ done
 
 debug "single-char flags: ${sflags}"
 
-TARGET='fixtures/'
-
 if echo ${sflags} | grep 't' >/dev/null; then
     run_shunit2
-elif [[ ! -z ${oarg} ]] && [[ ! -z ${narg} ]] && [[ -e ${TARGET} ]]; then
-    eren ${oarg} ${narg} ${TARGET}
+fi
+
+if [[ ! -f ${1} ]] && [[ ! -d ${1} ]]; then
+    error "${1} is not a file or a directory"
+fi
+
+if [[ ! -z ${oarg} ]] && [[ ! -z ${narg} ]] && [[ -e ${1} ]]; then
+    eren ${oarg} ${narg} ${1}
 else
     usage
 fi
