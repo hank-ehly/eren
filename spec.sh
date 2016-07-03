@@ -97,3 +97,37 @@ test_rename_files_recursively() {
         assertFalse '[[ -e fixtures/level1/level2/biz.php ]]'
         assertFalse '[[ -e fixtures/level1/level2/baz.php ]]'
 }
+
+test_handle_relative_dirs() {
+        cd fixtures && sh ../renex -vr -o php -n html ./ && cd ..
+
+        assertTrue '[[ -e fixtures/foo.html ]]'
+        assertTrue '[[ -e fixtures/bar.html ]]'
+        assertTrue '[[ -e fixtures/biz.html ]]'
+        assertTrue '[[ -e fixtures/baz.html ]]'
+
+        assertFalse '[[ -e fixtures/foo.php ]]'
+        assertFalse '[[ -e fixtures/bar.php ]]'
+        assertFalse '[[ -e fixtures/biz.php ]]'
+        assertFalse '[[ -e fixtures/baz.php ]]'
+
+        assertTrue '[[ -e fixtures/level1/foo.html ]]'
+        assertTrue '[[ -e fixtures/level1/bar.html ]]'
+        assertTrue '[[ -e fixtures/level1/biz.html ]]'
+        assertTrue '[[ -e fixtures/level1/baz.html ]]'
+
+        assertFalse '[[ -e fixtures/level1/foo.php ]]'
+        assertFalse '[[ -e fixtures/level1/bar.php ]]'
+        assertFalse '[[ -e fixtures/level1/biz.php ]]'
+        assertFalse '[[ -e fixtures/level1/baz.php ]]'
+
+        assertTrue '[[ -e fixtures/level1/level2/foo.html ]]'
+        assertTrue '[[ -e fixtures/level1/level2/bar.html ]]'
+        assertTrue '[[ -e fixtures/level1/level2/biz.html ]]'
+        assertTrue '[[ -e fixtures/level1/level2/baz.html ]]'
+
+        assertFalse '[[ -e fixtures/level1/level2/foo.php ]]'
+        assertFalse '[[ -e fixtures/level1/level2/bar.php ]]'
+        assertFalse '[[ -e fixtures/level1/level2/biz.php ]]'
+        assertFalse '[[ -e fixtures/level1/level2/baz.php ]]'
+}

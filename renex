@@ -128,14 +128,13 @@ run_shunit2() {
         fi
 }
 
-# TODO: Handle '.' references
 renex() {
         if [[ -d ${3} ]]
         then
-                local serialized_dirname=`echo ${3} | sed 's/\/$//'`
+                local ABS_PATH=$(cd ${3} && pwd | sed 's/\/$//')
                 if echo ${sflags} | grep 'r' >/dev/null
                 then
-                        for file in ${serialized_dirname}/*
+                        for file in ${ABS_PATH}/*
                         do
                                 if [[ -d ${file} ]]
                                 then
@@ -150,7 +149,7 @@ renex() {
                                 fi
                         done
                 else
-                        for file in ${serialized_dirname}/*.${1}
+                        for file in ${ABS_PATH}/*.${1}
                         do
                                 debug "mv ${file} `echo ${file} | cut -d. -f1`.${2}"
                                 mv ${file} `echo ${file} | cut -d. -f1`.${2}
@@ -158,7 +157,9 @@ renex() {
                 fi
         elif [[ -f ${3} ]]
         then
-                mv ${3} `echo ${3} | cut -d. -f1`.${2}
+                local ABS_PATH="$(cd `dirname ${3}` && pwd)/$(basename ${3})"
+                debug "mv ${ABS_PATH} `echo ${ABS_PATH} | cut -d. -f1`.${2}"
+                mv ${ABS_PATH} `echo ${ABS_PATH} | cut -d. -f1`.${2}
         fi
 }
 
