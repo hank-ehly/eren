@@ -31,12 +31,14 @@ usage() {
 
 clog() {
     if [[ $# -ne 2 ]]; then
-        warn 'clog() requires 2 arguments. Exit.' && exit 0
+        warn 'clog() requires 2 arguments. Exiting.' && exit 0
     fi
 
     local color=${1}
 
-    local log="[$(date +%Y-%m-%d' '%H:%M:%S)] ${2}"
+    local log_call_ln=${BASH_LINENO[1]}
+
+    local log="[$(date +%Y-%m-%d' '%H:%M:%S) Line: ${log_call_ln}] ${2}"
 
     case ${color}
     in
@@ -85,7 +87,7 @@ download_shunit2() {
 
     debug "test ! -f ${SHUNIT2_TB}"
     if [[ ! -f ${SHUNIT2_TB} ]]; then
-        error 'Failed to fetch tarball. Exit.'
+        error 'Failed to fetch tarball. Exiting.'
     fi
 
     debug "tar xzf ${SHUNIT2_TB}"
@@ -104,11 +106,12 @@ download_shunit2() {
         debug "sh ./eren.sh -t"
         sh ./eren.sh -t
     else
-        error 'Installation failed. Exit.'
+        error 'Installation failed. Exiting.'
     fi
 }
 
 run_shunit2() {
+
     debug "test ! -f ./vendor/${SHUNIT2_DIRNAME}/src/shunit2"
     if [[ ! -f ./vendor/${SHUNIT2_DIRNAME}/src/shunit2 ]]; then
 
@@ -122,7 +125,7 @@ run_shunit2() {
                 download_shunit2
                 ;;
             n)
-                log 'Exit.' && exit 0
+                log 'Exiting.' && exit 0
                 ;;
             *)
                 warn "Invalid option ${opt}."
@@ -136,32 +139,137 @@ run_shunit2() {
     fi
 }
 
+clean_fixtures() {
+    debug 'test -d fixtures'
+    if [[ -d fixtures ]]; then
+        debug 'rm -rf fixtures'
+        rm -rf fixtures
+    fi
+}
+
+generate_fixtures() {
+    mkdir fixtures
+    touch fixtures/foo.php
+    touch fixtures/bar.php
+    touch fixtures/biz.html
+    touch fixtures/baz.html
+
+    mkdir fixtures/level1
+    touch fixtures/level1/foo.php
+    touch fixtures/level1/bar.php
+    touch fixtures/level1/biz.html
+    touch fixtures/level1/baz.html
+
+    mkdir fixtures/level1/level2
+    touch fixtures/level1/level2/foo.php
+    touch fixtures/level1/level2/bar.php
+    touch fixtures/level1/level2/biz.html
+    touch fixtures/level1/level2/baz.html
+}
+
+setUp() {
+    clean_fixtures
+    generate_fixtures
+}
+
+tearDown() {
+    clean_fixtures
+}
+
+test_rename_single_file() {
+    sh eren.sh -v -o php -n html fixtures/foo.php
+
+    assertTrue '[[ -e fixtures/foo.html ]]'
+    assertFalse '[[ -e fixtures/foo.php ]]'
+
+    assertTrue '[[ -e fixtures/bar.php ]]'
+}
+
+test_rename_files_in_dir_non_recursive() {
+    sh eren.sh -v -o php -n html fixtures/
+
+    assertTrue '[[ -e fixtures/foo.html ]]'
+    assertTrue '[[ -e fixtures/bar.html ]]'
+    assertTrue '[[ -e fixtures/biz.html ]]'
+    assertTrue '[[ -e fixtures/baz.html ]]'
+
+    assertFalse '[[ -e fixtures/foo.php ]]'
+    assertFalse '[[ -e fixtures/bar.php ]]'
+    assertFalse '[[ -e fixtures/biz.php ]]'
+    assertFalse '[[ -e fixtures/baz.php ]]'
+
+    assertTrue '[[ -e fixtures/level1/foo.php ]]'
+    assertTrue '[[ -e fixtures/level1/bar.php ]]'
+    assertTrue '[[ -e fixtures/level1/biz.html ]]'
+    assertTrue '[[ -e fixtures/level1/baz.html ]]'
+}
+
+test_rename_files_recursively() {
+    sh eren.sh -vr -o php -n html fixtures/
+
+    assertTrue '[[ -e fixtures/foo.html ]]'
+    assertTrue '[[ -e fixtures/bar.html ]]'
+    assertTrue '[[ -e fixtures/biz.html ]]'
+    assertTrue '[[ -e fixtures/baz.html ]]'
+
+    assertFalse '[[ -e fixtures/foo.php ]]'
+    assertFalse '[[ -e fixtures/bar.php ]]'
+    assertFalse '[[ -e fixtures/biz.php ]]'
+    assertFalse '[[ -e fixtures/baz.php ]]'
+
+    assertTrue '[[ -e fixtures/level1/foo.html ]]'
+    assertTrue '[[ -e fixtures/level1/bar.html ]]'
+    assertTrue '[[ -e fixtures/level1/biz.html ]]'
+    assertTrue '[[ -e fixtures/level1/baz.html ]]'
+
+    assertFalse '[[ -e fixtures/level1/foo.php ]]'
+    assertFalse '[[ -e fixtures/level1/bar.php ]]'
+    assertFalse '[[ -e fixtures/level1/biz.php ]]'
+    assertFalse '[[ -e fixtures/level1/baz.php ]]'
+
+    assertTrue '[[ -e fixtures/level1/level2/foo.html ]]'
+    assertTrue '[[ -e fixtures/level1/level2/bar.html ]]'
+    assertTrue '[[ -e fixtures/level1/level2/biz.html ]]'
+    assertTrue '[[ -e fixtures/level1/level2/baz.html ]]'
+
+    assertFalse '[[ -e fixtures/level1/level2/foo.php ]]'
+    assertFalse '[[ -e fixtures/level1/level2/bar.php ]]'
+    assertFalse '[[ -e fixtures/level1/level2/biz.php ]]'
+    assertFalse '[[ -e fixtures/level1/level2/baz.php ]]'
+}
+
 eren() {
-    # eren old new file/
 
     if [[ -d ${3} ]]; then
 
-        local serialized_dirname=`echo ${3} | sed 's/\///'`
+        local serialized_dirname=`echo ${3} | sed 's/\/$//'`
 
-        if echo ${sflags} | grep 'r'; then
+        if echo ${sflags} | grep 'r' >/dev/null; then
 
-#            # recursive dir
-#            for file in ${serialized_dirname}/*.${1}
-#            do
-#                if [[ -d $file ]]; then
-#                    eren $1 $2 $file
-#                else
-#                    mv $file `echo $file | cut -d. -f1`.${2}
-#                fi
-#            done
-        echo ''
+            for file in ${serialized_dirname}/*
+            do
+                if [[ -d ${file} ]]; then
+
+                    debug "Going into ${file}"
+                    eren ${1} ${2} ${file}
+
+                elif echo ${file} | grep ".${1}" >/dev/null; then
+
+                    debug "mv ${file} `echo ${file} | cut -d. -f1`.${2}"
+                    mv ${file} `echo ${file} | cut -d. -f1`.${2}
+
+                else
+                    debug "Skipped ${file}"
+                fi
+            done
 
         else
 
             # non-recursive dir
             for file in ${serialized_dirname}/*.${1}
             do
-                mv $file `echo $file | cut -d. -f1`.${2}
+                debug "mv ${file} `echo ${file} | cut -d. -f1`.${2}"
+                mv ${file} `echo ${file} | cut -d. -f1`.${2}
             done
 
         fi
@@ -194,10 +302,10 @@ do
             sflags="${i#-}$sflags";
             shift;;
         -o)
-            debug "oarg is ${2}"; oarg="$2"; shift;
+            debug "old extension is ${2}"; oarg="$2"; shift;
             shift;;
         -n)
-            debug "narg is ${2}"; narg="$2"; shift;
+            debug "new extension is ${2}"; narg="$2"; shift;
             shift;;
         --)
             shift; break;;
@@ -206,16 +314,19 @@ done
 
 debug "single-char flags: ${sflags}"
 
+if [[ -z ${sflags} ]] && [[ $# -eq 0 ]]; then
+    usage
+fi
+
 if echo ${sflags} | grep 't' >/dev/null; then
     run_shunit2
 fi
 
-if [[ ! -f ${1} ]] && [[ ! -d ${1} ]]; then
-    error "${1} is not a file or a directory"
+if [[ ! -z ${1} ]] && [[ ! -f ${1} ]] && [[ ! -d ${1} ]]; then
+    error "\"${1}\" is not a file or a directory. Exiting."
+    usage
 fi
 
 if [[ ! -z ${oarg} ]] && [[ ! -z ${narg} ]] && [[ -e ${1} ]]; then
     eren ${oarg} ${narg} ${1}
-else
-    usage
 fi
