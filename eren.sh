@@ -6,8 +6,12 @@ SHUNIT2_DL='https://storage.googleapis.com/google-code-archive-downloads/v2/code
 SHUNIT2_TB='shunit2-2.1.6.tgz'
 SHUNIT2_DIRNAME="`echo ${SHUNIT2_TB} | sed s/.tgz//`"
 
-VERBOSE='no'
+VERBOSE=''
 RUN_TESTS='no'
+sflags=''
+
+SOURCE_EXT=''
+TARGET_EXT=''
 
 usage() {
     echo '
@@ -34,7 +38,8 @@ clog() {
 
     local log="[$(date +%Y-%m-%d' '%H:%M:%S)] ${2}"
 
-    case ${color} in
+    case ${color}
+    in
         black)
             echo "\033[0m${log}\033[0m" && echo ${log} >> ${LOGFILE}
             ;;
@@ -62,7 +67,7 @@ warn() {
 }
 
 debug() {
-    if [[ ${VERBOSE} = 'yes' ]]; then
+    if echo ${sflags} | grep 'v' >/dev/null; then
         clog blue "${1}"
     fi
 }
@@ -76,7 +81,7 @@ download_shunit2() {
     mkdir vendor && cd vendor
 
     debug "wget ${SHUNIT2_DL}"
-    wget ${SHUNIT2_DL} > /dev/null 2>&1
+    wget ${SHUNIT2_DL} >/dev/null 2>&1
 
     debug "test ! -f ${SHUNIT2_TB}"
     if [[ ! -f ${SHUNIT2_TB} ]]; then
@@ -112,7 +117,8 @@ run_shunit2() {
 
         local serialized_reply=`echo ${REPLY} | tr [:upper:] [:lower:]`
 
-        case ${serialized_reply} in
+        case ${serialized_reply}
+        in
             y)
                 download_shunit2
                 ;;
@@ -131,30 +137,81 @@ run_shunit2() {
     fi
 }
 
-if [[ ${#} -eq 0 ]]; then
+eren() {
+    # eren old new file/
+
+    if [[ -d ${3} ]]; then
+
+        local serialized_dirname = echo ${3} | sed 's/\///'
+
+        if echo ${sflags} | grep 'r'; then
+
+            # recursive dir
+            for file in ${serialized_dirname}/*.${1}
+            do
+                if [[ -d $file ]]; then
+                    eren $1 $2 $file
+                else
+                    mv $file `echo $file | cut -d. -f1`.${2}
+                fi
+            done
+
+        else
+
+            # non-recursive dir
+            for file in ${serialized_dirname}/*.${1}
+            do
+                mv $file `echo $file | cut -d. -f1`.${2}
+            done
+
+        fi
+    fi
+
+    if [[ -f ${3} ]]; then
+        mv ${3} `echo ${3} | cut -d. -f1`.${2}
+    fi
+}
+
+
+
+args=`getopt hn:o:rtv $*`
+
+if [[ ${?} -ne 0 ]]; then
     usage
+    exit 2
 fi
 
-while getopts 'htrv' opt; do
-    case ${opt} in
-        h)
+set -- $args
+
+for i
+do
+    case "$i"
+    in
+        -h)
             usage
             ;;
-        t)
-            RUN_TESTS='yes'
-            ;;
-        r)
-            echo 'recursive'
-            ;;
-        v)
-            VERBOSE='yes'
-            ;;
-        *)
-            usage
-            ;;
+        -r|-t|-v)
+            sflags="${i#-}$sflags";
+            shift;;
+        -o)
+            debug "oarg is ${2}"; oarg="$2"; shift;
+            shift;;
+        -n)
+            debug "narg is ${2}"; narg="$2"; shift;
+            shift;;
+        --)
+            shift; break;;
     esac
 done
 
-if [[ ${RUN_TESTS} = 'yes' ]]; then
+debug "single-char flags: ${sflags}"
+
+TARGET='fixtures/'
+
+if echo ${sflags} | grep 't' >/dev/null; then
     run_shunit2
+elif [[ ! -z ${oarg} ]] && [[ ! -z ${narg} ]] && [[ -e ${TARGET} ]]; then
+    eren ${oarg} ${narg} ${TARGET}
+else
+    usage
 fi
