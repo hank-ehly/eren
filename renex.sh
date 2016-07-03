@@ -87,15 +87,15 @@ download_shunit2() {
     debug "rm -f ${SHUNIT2_TB}"
     rm -f ${SHUNIT2_TB}
 
-    debug "test -f ./${SHUNIT2_DIRNAME}/src/shunit2"
-    if [[ -f ./${SHUNIT2_DIRNAME}/src/shunit2 ]]; then
+    debug "test -f ${SCRIPT_DIR}/${SHUNIT2_DIRNAME}/src/shunit2"
+    if [[ -f ${SCRIPT_DIR}/${SHUNIT2_DIRNAME}/src/shunit2 ]]; then
         log "Installed shunit2 to vendor/${SHUNIT2_DIRNAME}"
 
         debug "cd .."
         cd ..
 
-        debug "sh ./renex.sh -t"
-        sh ./renex.sh -t
+        debug "sh ${SCRIPT_DIR}/renex.sh -t"
+        sh ${SCRIPT_DIR}/renex.sh -t
     else
         error 'Installation failed. Exiting.'
     fi
@@ -103,8 +103,8 @@ download_shunit2() {
 
 run_shunit2() {
 
-    debug "test ! -f ./vendor/${SHUNIT2_DIRNAME}/src/shunit2"
-    if [[ ! -f ./vendor/${SHUNIT2_DIRNAME}/src/shunit2 ]]; then
+    debug "test ! -f ${SCRIPT_DIR}/vendor/${SHUNIT2_DIRNAME}/src/shunit2"
+    if [[ ! -f ${SCRIPT_DIR}/vendor/${SHUNIT2_DIRNAME}/src/shunit2 ]]; then
 
         read -p 'You must download shunit2 (320K) to run the tests. Download now? [y/n] '
 
@@ -120,13 +120,13 @@ run_shunit2() {
                 ;;
             *)
                 warn "Invalid option ${opt}."
-                sh ./renex.sh -t
+                sh ${SCRIPT_DIR}/renex.sh -t
                 ;;
         esac
 
     else
         debug 'Running tests'
-        sh ./vendor/${SHUNIT2_DIRNAME}/src/shunit2 "${SCRIPT_DIR}/spec.sh"
+        sh ${SCRIPT_DIR}/vendor/${SHUNIT2_DIRNAME}/src/shunit2 "${SCRIPT_DIR}/spec.sh"
     fi
 }
 
