@@ -1,7 +1,12 @@
 #!/usr/bin/env bash
 
-sflags=''
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
+if [[ -L ${SCRIPT_DIR}/renex ]]; then
+    SCRIPT_DIR=$(dirname `readlink ${SCRIPT_DIR}/renex`)
+fi
+
+sflags=''
 LOGFILE="${SCRIPT_DIR}/.renexlog"
 
 SHUNIT2_DL='https://storage.googleapis.com/google-code-archive-downloads/v2/code.google.com/shunit2/shunit2-2.1.6.tgz'
