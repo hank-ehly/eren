@@ -36,7 +36,7 @@ tearDown() {
 }
 
 test_rename_single_file() {
-    sh renex.sh -v -o php -n html fixtures/foo.php
+    sh renex -v -o php -n html fixtures/foo.php
 
     assertTrue '[[ -e fixtures/foo.html ]]'
     assertFalse '[[ -e fixtures/foo.php ]]'
@@ -45,7 +45,7 @@ test_rename_single_file() {
 }
 
 test_rename_files_in_dir_non_recursive() {
-    sh renex.sh -v -o php -n html fixtures/
+    sh renex -v -o php -n html fixtures/
 
     assertTrue '[[ -e fixtures/foo.html ]]'
     assertTrue '[[ -e fixtures/bar.html ]]'
@@ -64,7 +64,7 @@ test_rename_files_in_dir_non_recursive() {
 }
 
 test_rename_files_recursively() {
-    sh renex.sh -vr -o php -n html fixtures/
+    sh renex -vr -o php -n html fixtures/
 
     assertTrue '[[ -e fixtures/foo.html ]]'
     assertTrue '[[ -e fixtures/bar.html ]]'

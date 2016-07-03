@@ -76,7 +76,7 @@ log() {
 
 download_shunit2() {
     debug 'mkdir vendor && cd vendor'
-    mkdir vendor && cd vendor
+    mkdir ${SCRIPT_DIR}/vendor && cd ${SCRIPT_DIR}/vendor
 
     debug "wget ${SHUNIT2_DL}"
     wget ${SHUNIT2_DL} >/dev/null 2>&1
