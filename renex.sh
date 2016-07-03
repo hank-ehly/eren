@@ -30,25 +30,25 @@ clog() {
     fi
 
     local log_str="[$(date +%Y-%m-%d' '%H:%M:%S) Line: ${BASH_LINENO[1]}] ${2}"
-    local default_black='\033[0m'
+    local default_black='[0m'
     local color=${default_black}
 
     case ${1}
     in
         blue)
-            color='\033[0;34m'
+            color='[0;34m'
             ;;
         red)
-            color='\033[1;31m'
+            color='[1;31m'
             ;;
         yellow)
-            color='\033[0;33m'
+            color='[0;33m'
             ;;
         *)
             ;;
     esac
 
-    echo "${color}${log_str}${default_black}" && echo ${log_str} >> ${LOGFILE}
+    echo -e "\033${color}${log_str}\033${default_black}" && echo ${log_str} >> ${LOGFILE}
 }
 
 error() {
