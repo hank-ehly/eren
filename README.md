@@ -13,6 +13,8 @@ A bash script for easily renaming file extensions
     Example: $ renex -r -v -o php -n html src/
              # Recursively rename all .php to .html in src folder
 
+Disclaimer: For the time being, do not specify relative files or directories using '.'. This will result in all your files being renamed to '.'.
+
 ### License
 
 The MIT License (MIT)
