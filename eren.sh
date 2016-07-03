@@ -154,6 +154,7 @@ eren() {
 #                    mv $file `echo $file | cut -d. -f1`.${2}
 #                fi
 #            done
+        echo ''
 
         else
 
