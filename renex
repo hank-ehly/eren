@@ -2,8 +2,9 @@
 
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
-if [[ -L ${SCRIPT_DIR}/renex ]]; then
-    SCRIPT_DIR=$(dirname `readlink ${SCRIPT_DIR}/renex`)
+if [[ -L ${SCRIPT_DIR}/renex ]]
+then
+        SCRIPT_DIR=$(dirname `readlink ${SCRIPT_DIR}/renex`)
 fi
 
 sflags=''
@@ -14,184 +15,202 @@ SHUNIT2_TB='shunit2-2.1.6.tgz'
 SHUNIT2_DIRNAME="`echo ${SHUNIT2_TB} | sed s/.tgz//`"
 
 usage() {
-    cat ${SCRIPT_DIR}/USAGE
-    exit 0
+        if [[ -s ${SCRIPT_DIR}/USAGE ]]
+        then
+                cat ${SCRIPT_DIR}/USAGE
+        else
+                error "Could not locate USAGE file in ${SCRIPT_DIR}"
+        fi
 }
 
 clog() {
-    if [[ $# -ne 2 ]]; then
-        warn 'clog() requires 2 arguments. Exiting.' && exit 0
-    fi
+        if [[ $# -ne 2 ]]; then
+                error 'clog() requires 2 arguments. Exiting.' && exit 1
+        fi
 
-    local log_str="[$(date +%Y-%m-%d' '%H:%M:%S) Line: ${BASH_LINENO[1]}] ${2}"
-    local default_black='[0m'
-    local color=${default_black}
+        local log_str="[$(date +%Y-%m-%d' '%H:%M:%S) Line: ${BASH_LINENO[1]}] ${2}"
+        local CSI="\033["
+        local color='0'
 
-    case ${1}
-    in
-        blue)
-            color='[0;34m'
-            ;;
-        red)
-            color='[1;31m'
-            ;;
-        yellow)
-            color='[0;33m'
-            ;;
-        *)
-            ;;
-    esac
+        case ${1}
+        in
+                blue)
+                        color='34'
+                        ;;
+                red)
+                        color='1;31'
+                        ;;
+                yellow)
+                        color='33'
+                        ;;
+                *)
+                        ;;
+        esac
 
-    echo "\033${color}${log_str}\033${default_black}" && echo ${log_str} >> ${LOGFILE}
+        echo "${CSI}${color}m${log_str}${CSI}m" && echo ${log_str} >> ${LOGFILE}
 }
 
 error() {
-    clog red "${1}" && exit 1
+        clog red "${1}" && exit 1
 }
 
 warn() {
-    clog yellow "${1}"
+        clog yellow "${1}"
 }
 
 debug() {
-    if echo ${sflags} | grep 'v' >/dev/null; then
-        clog blue "${1}"
-    fi
+        if echo ${sflags} | grep 'v' >/dev/null
+        then
+                clog blue "${1}"
+        fi
 }
 
 log() {
-    clog black "${1}"
+        clog black "${1}"
 }
 
 download_shunit2() {
-    debug 'mkdir vendor && cd vendor'
-    mkdir ${SCRIPT_DIR}/vendor && cd ${SCRIPT_DIR}/vendor
+        debug 'mkdir vendor && cd vendor'
+        mkdir ${SCRIPT_DIR}/vendor && cd ${SCRIPT_DIR}/vendor
 
-    debug "wget ${SHUNIT2_DL}"
-    wget ${SHUNIT2_DL} >/dev/null 2>&1
+        debug "wget ${SHUNIT2_DL}"
+        wget ${SHUNIT2_DL} >/dev/null 2>&1
 
-    debug "test ! -f ${SHUNIT2_TB}"
-    if [[ ! -f ${SHUNIT2_TB} ]]; then
-        error 'Failed to fetch tarball. Exiting.'
-    fi
+        debug "test ! -f ${SHUNIT2_TB}"
+        if [[ ! -f ${SHUNIT2_TB} ]]
+        then
+                error 'Failed to fetch tarball. Exiting.'
+        fi
 
-    debug "tar xzf ${SHUNIT2_TB}"
-    tar xzf ${SHUNIT2_TB}
+        debug "tar xzf ${SHUNIT2_TB}"
+        tar xzf ${SHUNIT2_TB}
 
-    debug "rm -f ${SHUNIT2_TB}"
-    rm -f ${SHUNIT2_TB}
+        debug "rm -f ${SHUNIT2_TB}"
+        rm -f ${SHUNIT2_TB}
 
-    debug "test -f ${SCRIPT_DIR}/vendor/${SHUNIT2_DIRNAME}/src/shunit2"
-    if [[ -f ${SCRIPT_DIR}/vendor/${SHUNIT2_DIRNAME}/src/shunit2 ]]; then
-        log "Installed shunit2 to vendor/${SHUNIT2_DIRNAME}"
+        debug "test -f ${SCRIPT_DIR}/vendor/${SHUNIT2_DIRNAME}/src/shunit2"
+        if [[ -f ${SCRIPT_DIR}/vendor/${SHUNIT2_DIRNAME}/src/shunit2 ]]
+        then
+                log "Installed shunit2 to vendor/${SHUNIT2_DIRNAME}"
 
-        debug "cd .."
-        cd ..
+                debug "cd .."
+                cd ..
 
-        debug "sh ${SCRIPT_DIR}/renex -t"
-        sh ${SCRIPT_DIR}/renex -t
-    else
-        error 'Installation failed. Exiting.'
-    fi
+                debug "sh ${SCRIPT_DIR}/renex -t"
+                sh ${SCRIPT_DIR}/renex -t
+        else
+                error 'Installation failed. Exiting.'
+        fi
 }
 
 run_shunit2() {
-    debug "test ! -f ${SCRIPT_DIR}/vendor/${SHUNIT2_DIRNAME}/src/shunit2"
-    if [[ ! -f ${SCRIPT_DIR}/vendor/${SHUNIT2_DIRNAME}/src/shunit2 ]]; then
-        read -p 'You must download shunit2 (320K) to run the tests. Download now? [y/n] '
-        local serialized_reply=`echo ${REPLY} | tr [:upper:] [:lower:]`
-        case ${serialized_reply}
-        in
-            y)
-                download_shunit2
-                ;;
-            n)
-                log 'Exiting.' && exit 0
-                ;;
-            *)
-                warn "Invalid option ${opt}."
-                sh ${SCRIPT_DIR}/renex -t
-                ;;
-        esac
-    else
-        debug 'Running tests'
-        sh ${SCRIPT_DIR}/vendor/${SHUNIT2_DIRNAME}/src/shunit2 "${SCRIPT_DIR}/spec.sh"
-    fi
+        debug "test ! -f ${SCRIPT_DIR}/vendor/${SHUNIT2_DIRNAME}/src/shunit2"
+        if [[ ! -f ${SCRIPT_DIR}/vendor/${SHUNIT2_DIRNAME}/src/shunit2 ]]
+        then
+                read -p 'You must download shunit2 (320K) to run the tests. Download now? [y/n] '
+                local serialized_reply=`echo ${REPLY} | tr [:upper:] [:lower:]`
+                case ${serialized_reply}
+                in
+                        y)
+                                download_shunit2
+                                ;;
+                        n)
+                                log 'Exiting.' && exit 0
+                                ;;
+                        *)
+                                warn "Invalid option ${opt}."
+                                sh ${SCRIPT_DIR}/renex -t
+                                ;;
+                esac
+        else
+                debug "sh ${SCRIPT_DIR}/vendor/${SHUNIT2_DIRNAME}/src/shunit2 ${SCRIPT_DIR}/spec.sh"
+                sh ${SCRIPT_DIR}/vendor/${SHUNIT2_DIRNAME}/src/shunit2 "${SCRIPT_DIR}/spec.sh"
+        fi
 }
 
+# TODO: Handle '.' references
 renex() {
-    if [[ -d ${3} ]]; then
-        local serialized_dirname=`echo ${3} | sed 's/\/$//'`
-        if echo ${sflags} | grep 'r' >/dev/null; then
-            for file in ${serialized_dirname}/*
-            do
-                if [[ -d ${file} ]]; then
-                    debug "Entering ${file}"
-                    renex ${1} ${2} ${file}
-                elif echo ${file} | grep ".${1}" >/dev/null; then
-                    debug "mv ${file} `echo ${file} | cut -d. -f1`.${2}"
-                    mv ${file} `echo ${file} | cut -d. -f1`.${2}
+        if [[ -d ${3} ]]
+        then
+                local serialized_dirname=`echo ${3} | sed 's/\/$//'`
+                if echo ${sflags} | grep 'r' >/dev/null
+                then
+                        for file in ${serialized_dirname}/*
+                        do
+                                if [[ -d ${file} ]]
+                                then
+                                        debug "Entering ${file}"
+                                        renex ${1} ${2} ${file}
+                                elif echo ${file} | grep ".${1}" >/dev/null
+                                then
+                                        debug "mv ${file} `echo ${file} | cut -d. -f1`.${2}"
+                                        mv ${file} `echo ${file} | cut -d. -f1`.${2}
+                                else
+                                        debug "Skipped ${file}"
+                                fi
+                        done
                 else
-                    debug "Skipped ${file}"
+                        for file in ${serialized_dirname}/*.${1}
+                        do
+                                debug "mv ${file} `echo ${file} | cut -d. -f1`.${2}"
+                                mv ${file} `echo ${file} | cut -d. -f1`.${2}
+                        done
                 fi
-            done
-        else
-            for file in ${serialized_dirname}/*.${1}
-            do
-                debug "mv ${file} `echo ${file} | cut -d. -f1`.${2}"
-                mv ${file} `echo ${file} | cut -d. -f1`.${2}
-            done
+        elif [[ -f ${3} ]]
+        then
+                mv ${3} `echo ${3} | cut -d. -f1`.${2}
         fi
-    elif [[ -f ${3} ]]; then
-        mv ${3} `echo ${3} | cut -d. -f1`.${2}
-    fi
 }
 
 args=`getopt hn:o:rtv $*`
 
-if [[ ${?} -ne 0 ]]; then
-    usage
-    exit 2
+if [ $? != 0 ]
+then
+        usage && exit 2
 fi
 
 set -- $args
 
 for i
 do
-    case "$i"
-    in
-        -h)
-            usage
-            ;;
-        -r|-t|-v)
-            sflags="${i#-}$sflags";
-            shift;;
-        -o)
-            debug "old extension is ${2}"; oarg="$2"; shift;
-            shift;;
-        -n)
-            debug "new extension is ${2}"; narg="$2"; shift;
-            shift;;
-        --)
-            shift; break;;
-    esac
+        case "$i"
+        in
+                -h)
+                        usage && exit 0
+                        ;;
+                -r|-t|-v)
+                        sflags="${i#-}$sflags";
+                        shift;;
+                -o)
+                        debug "old extension is ${2}"; oarg="$2"; shift;
+                        shift;;
+                -n)
+                        debug "new extension is ${2}"; narg="$2"; shift;
+                        shift;;
+                --)
+                        shift; break;;
+        esac
 done
 
 debug "single-char flags: ${sflags}"
 
-if [[ -z ${sflags} ]] && [[ $# -eq 0 ]]; then
-    usage
+if [[ -z ${sflags} ]] && [[ $# -eq 0 ]]
+then
+        usage && exit 0
 fi
 
-if echo ${sflags} | grep 't' >/dev/null; then
-    run_shunit2
+if echo ${sflags} | grep 't' >/dev/null
+then
+        run_shunit2
 fi
 
-if [[ ! -z ${1} ]] && [[ ! -f ${1} ]] && [[ ! -d ${1} ]]; then
-    error "\"${1}\" is not a file or a directory. Exiting."
-    usage
+if [[ ! -z ${1} ]] && [[ ! -f ${1} ]] && [[ ! -d ${1} ]]
+then
+        error "\"${1}\" is not a file or a directory. Exiting."
+        usage && exit 0
 fi
 
-if [[ ! -z ${oarg} ]] && [[ ! -z ${narg} ]] && [[ -e ${1} ]]; then
-    renex ${oarg} ${narg} ${1}
+if [[ ! -z ${oarg} ]] && [[ ! -z ${narg} ]] && [[ -e ${1} ]]
+then
+        renex ${oarg} ${narg} ${1}
 fi
