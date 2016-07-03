@@ -1,24 +1,18 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
+sflags=''
 LOGFILE="`pwd`/.renexlog"
 
 SHUNIT2_DL='https://storage.googleapis.com/google-code-archive-downloads/v2/code.google.com/shunit2/shunit2-2.1.6.tgz'
 SHUNIT2_TB='shunit2-2.1.6.tgz'
 SHUNIT2_DIRNAME="`echo ${SHUNIT2_TB} | sed s/.tgz//`"
 
-VERBOSE=''
-RUN_TESTS='no'
-sflags=''
-
-SOURCE_EXT=''
-TARGET_EXT=''
-
 usage() {
     echo '
     Usage:
             -h             : help
             -r             : recursive
-            -t             : run shunit2 tests
+            -t             : run unit tests
             -v             : verbose
             -o <extension> : specify .old extension
             -n <extension> : specify .new extension
@@ -34,30 +28,26 @@ clog() {
         warn 'clog() requires 2 arguments. Exiting.' && exit 0
     fi
 
-    local color=${1}
+    local log_str="[$(date +%Y-%m-%d' '%H:%M:%S) Line: ${BASH_LINENO[1]}] ${2}"
+    local default_black='\033[0m'
+    local color=${default_black}
 
-    local log_call_ln=${BASH_LINENO[1]}
-
-    local log="[$(date +%Y-%m-%d' '%H:%M:%S) Line: ${log_call_ln}] ${2}"
-
-    case ${color}
+    case ${1}
     in
-        black)
-            echo "\033[0m${log}\033[0m" && echo ${log} >> ${LOGFILE}
-            ;;
         blue)
-            echo "\033[0;34m${log}\033[0m" && echo ${log} >> ${LOGFILE}
+            color='\033[0;34m'
             ;;
         red)
-            echo "\033[1;31m${log}\033[0m" && echo ${log} >> ${LOGFILE}
+            color='\033[1;31m'
             ;;
         yellow)
-            echo "\033[0;33m${log}\033[0m" && echo ${log} >> ${LOGFILE}
+            color='\033[0;33m'
             ;;
         *)
-            clog black "${2}"
             ;;
     esac
+
+    echo "${color}${log_str}${default_black}" && echo ${log_str} >> ${LOGFILE}
 }
 
 error() {
@@ -135,107 +125,8 @@ run_shunit2() {
 
     else
         debug 'Running tests'
-        sh ./vendor/${SHUNIT2_DIRNAME}/src/shunit2 ${BASH_SOURCE[0]}
+        sh ./vendor/${SHUNIT2_DIRNAME}/src/shunit2 `pwd`/spec.sh
     fi
-}
-
-clean_fixtures() {
-    debug 'test -d fixtures'
-    if [[ -d fixtures ]]; then
-        debug 'rm -rf fixtures'
-        rm -rf fixtures
-    fi
-}
-
-generate_fixtures() {
-    mkdir fixtures
-    touch fixtures/foo.php
-    touch fixtures/bar.php
-    touch fixtures/biz.html
-    touch fixtures/baz.html
-
-    mkdir fixtures/level1
-    touch fixtures/level1/foo.php
-    touch fixtures/level1/bar.php
-    touch fixtures/level1/biz.html
-    touch fixtures/level1/baz.html
-
-    mkdir fixtures/level1/level2
-    touch fixtures/level1/level2/foo.php
-    touch fixtures/level1/level2/bar.php
-    touch fixtures/level1/level2/biz.html
-    touch fixtures/level1/level2/baz.html
-}
-
-setUp() {
-    clean_fixtures
-    generate_fixtures
-}
-
-tearDown() {
-    clean_fixtures
-}
-
-test_rename_single_file() {
-    sh renex.sh -v -o php -n html fixtures/foo.php
-
-    assertTrue '[[ -e fixtures/foo.html ]]'
-    assertFalse '[[ -e fixtures/foo.php ]]'
-
-    assertTrue '[[ -e fixtures/bar.php ]]'
-}
-
-test_rename_files_in_dir_non_recursive() {
-    sh renex.sh -v -o php -n html fixtures/
-
-    assertTrue '[[ -e fixtures/foo.html ]]'
-    assertTrue '[[ -e fixtures/bar.html ]]'
-    assertTrue '[[ -e fixtures/biz.html ]]'
-    assertTrue '[[ -e fixtures/baz.html ]]'
-
-    assertFalse '[[ -e fixtures/foo.php ]]'
-    assertFalse '[[ -e fixtures/bar.php ]]'
-    assertFalse '[[ -e fixtures/biz.php ]]'
-    assertFalse '[[ -e fixtures/baz.php ]]'
-
-    assertTrue '[[ -e fixtures/level1/foo.php ]]'
-    assertTrue '[[ -e fixtures/level1/bar.php ]]'
-    assertTrue '[[ -e fixtures/level1/biz.html ]]'
-    assertTrue '[[ -e fixtures/level1/baz.html ]]'
-}
-
-test_rename_files_recursively() {
-    sh renex.sh -vr -o php -n html fixtures/
-
-    assertTrue '[[ -e fixtures/foo.html ]]'
-    assertTrue '[[ -e fixtures/bar.html ]]'
-    assertTrue '[[ -e fixtures/biz.html ]]'
-    assertTrue '[[ -e fixtures/baz.html ]]'
-
-    assertFalse '[[ -e fixtures/foo.php ]]'
-    assertFalse '[[ -e fixtures/bar.php ]]'
-    assertFalse '[[ -e fixtures/biz.php ]]'
-    assertFalse '[[ -e fixtures/baz.php ]]'
-
-    assertTrue '[[ -e fixtures/level1/foo.html ]]'
-    assertTrue '[[ -e fixtures/level1/bar.html ]]'
-    assertTrue '[[ -e fixtures/level1/biz.html ]]'
-    assertTrue '[[ -e fixtures/level1/baz.html ]]'
-
-    assertFalse '[[ -e fixtures/level1/foo.php ]]'
-    assertFalse '[[ -e fixtures/level1/bar.php ]]'
-    assertFalse '[[ -e fixtures/level1/biz.php ]]'
-    assertFalse '[[ -e fixtures/level1/baz.php ]]'
-
-    assertTrue '[[ -e fixtures/level1/level2/foo.html ]]'
-    assertTrue '[[ -e fixtures/level1/level2/bar.html ]]'
-    assertTrue '[[ -e fixtures/level1/level2/biz.html ]]'
-    assertTrue '[[ -e fixtures/level1/level2/baz.html ]]'
-
-    assertFalse '[[ -e fixtures/level1/level2/foo.php ]]'
-    assertFalse '[[ -e fixtures/level1/level2/bar.php ]]'
-    assertFalse '[[ -e fixtures/level1/level2/biz.php ]]'
-    assertFalse '[[ -e fixtures/level1/level2/baz.php ]]'
 }
 
 renex() {
