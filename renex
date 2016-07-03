@@ -142,8 +142,7 @@ renex() {
                 mv ${file} `echo ${file} | cut -d. -f1`.${2}
             done
         fi
-    fi
-    if [[ -f ${3} ]]; then
+    elif [[ -f ${3} ]]; then
         mv ${3} `echo ${3} | cut -d. -f1`.${2}
     fi
 }
