@@ -53,7 +53,7 @@ clog() {
             ;;
     esac
 
-    echo -e "\033${color}${log_str}\033${default_black}" && echo ${log_str} >> ${LOGFILE}
+    echo "\033${color}${log_str}\033${default_black}" && echo ${log_str} >> ${LOGFILE}
 }
 
 error() {
