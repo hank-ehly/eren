@@ -1,4 +1,5 @@
 language: sh
 install: true
+sudo: required
 script: sh ./renex -vt
 after_script: if [ -f .renexlog ]; then cat .renexlog; fi
