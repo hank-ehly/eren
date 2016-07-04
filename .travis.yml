@@ -1,0 +1,4 @@
+language: sh
+install: true
+script: sh ./renex -vt
+after_script: if [ -f .renexlog ]; then cat .renexlog; fi
