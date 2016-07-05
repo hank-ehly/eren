@@ -1,5 +1,7 @@
 ### renex (ren)ame (ex)tension
 
+[![Build Status](https://travis-ci.org/hank-ehly/renex.svg?branch=master)](https://travis-ci.org/hank-ehly/renex)
+
 A bash script for easily renaming file extensions
 
     Usage:
