@@ -96,8 +96,8 @@ download_shunit2() {
                 debug "cd .."
                 cd ..
 
-                debug "sh ${SCRIPT_DIR}/renex -t"
-                sh ${SCRIPT_DIR}/renex -t
+                debug "${SCRIPT_DIR}/renex -t"
+                ${SCRIPT_DIR}/renex -t
         else
                 error 'Installation failed. Exiting.'
         fi
@@ -119,12 +119,12 @@ run_shunit2() {
                                 ;;
                         *)
                                 warn "Invalid option ${opt}."
-                                sh ${SCRIPT_DIR}/renex -t
+                                ${SCRIPT_DIR}/renex -t
                                 ;;
                 esac
         else
-                debug "sh ${SCRIPT_DIR}/vendor/${SHUNIT2_DIRNAME}/src/shunit2 ${SCRIPT_DIR}/spec.sh"
-                sh ${SCRIPT_DIR}/vendor/${SHUNIT2_DIRNAME}/src/shunit2 "${SCRIPT_DIR}/spec.sh"
+                debug "bash ${SCRIPT_DIR}/vendor/${SHUNIT2_DIRNAME}/src/shunit2 ${SCRIPT_DIR}/spec.sh"
+                bash ${SCRIPT_DIR}/vendor/${SHUNIT2_DIRNAME}/src/shunit2 "${SCRIPT_DIR}/spec.sh"
         fi
 }
 
