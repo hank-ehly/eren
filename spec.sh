@@ -37,7 +37,7 @@ tearDown() {
 }
 
 test_rename_single_file() {
-        sh renex -v -o php -n html fixtures/foo.php
+        ./renex -v -o php -n html fixtures/foo.php
 
         assertTrue '[[ -e fixtures/foo.html ]]'
         assertFalse '[[ -e fixtures/foo.php ]]'
@@ -46,7 +46,7 @@ test_rename_single_file() {
 }
 
 test_rename_files_in_dir_non_recursive() {
-        sh renex -v -o php -n html fixtures/
+        ./renex -v -o php -n html fixtures/
 
         assertTrue '[[ -e fixtures/foo.html ]]'
         assertTrue '[[ -e fixtures/bar.html ]]'
@@ -65,7 +65,7 @@ test_rename_files_in_dir_non_recursive() {
 }
 
 test_rename_files_recursively() {
-        sh renex -vr -o php -n html fixtures/
+        ./renex -vr -o php -n html fixtures/
 
         assertTrue '[[ -e fixtures/foo.html ]]'
         assertTrue '[[ -e fixtures/bar.html ]]'
@@ -99,7 +99,7 @@ test_rename_files_recursively() {
 }
 
 test_handle_relative_dirs() {
-        cd fixtures && sh ../renex -vr -o php -n html ./ && cd ..
+        cd fixtures && ../renex -vr -o php -n html ./ && cd ..
 
         assertTrue '[[ -e fixtures/foo.html ]]'
         assertTrue '[[ -e fixtures/bar.html ]]'

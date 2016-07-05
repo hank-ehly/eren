@@ -47,7 +47,7 @@ clog() {
                         ;;
         esac
 
-        echo "${CSI}${color}m${log_str}${CSI}m" && echo ${log_str} >> ${LOGFILE}
+        echo -e "${CSI}${color}m${log_str}${CSI}m" && echo ${log_str} >> ${LOGFILE}
 }
 
 error() {

@@ -1,9 +1,9 @@
 language: bash
 install: true
 before_script:
-  - mkdir vendor
   - wget https://storage.googleapis.com/google-code-archive-downloads/v2/code.google.com/shunit2/shunit2-2.1.6.tgz
   - tar xzf shunit2-2.1.6.tgz
+  - mkdir vendor
   - mv shunit2-2.1.6 vendor/
 script: ./renex -vt
 after_script: if [ -f .renexlog ]; then cat .renexlog; fi
