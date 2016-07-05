@@ -1,4 +1,4 @@
-#!/usr/bin/env sh
+#!/usr/bin/env bash
 
 clean_fixtures() {
         if [[ -d fixtures ]]
