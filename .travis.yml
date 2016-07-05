@@ -1,5 +1,7 @@
 language: sh
 install: true
-sudo: required
-script: sh ./renex -vt
+before_script:
+  - wget https://storage.googleapis.com/google-code-archive-downloads/v2/code.google.com/shunit2/shunit2-2.1.6.tgz
+  - tar xzf shunit2-2.1.6.tgz
+script: ./renex -vt
 after_script: if [ -f .renexlog ]; then cat .renexlog; fi
