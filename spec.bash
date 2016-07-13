@@ -48,87 +48,85 @@ tearDown() {
 test_rename_single_file() {
         ${SCRIPT_DIR}/renex -o php -n html ${SCRIPT_DIR}/fixtures/foo.php
 
-        assertTrue ' fixtures/foo.html should exist' '[[ -e fixtures/foo.html ]]'
-        assertFalse ' fixtures/foo.php should not exist' '[[ -e fixtures/foo.php ]]'
+        assertTrue " ${SCRIPT_DIR}/fixtures/foo.html should exist" "[[ -e ${SCRIPT_DIR}/fixtures/foo.html ]]"
+        assertFalse " ${SCRIPT_DIR}/fixtures/foo.php should not exist" "[[ -e ${SCRIPT_DIR}/fixtures/foo.php ]]"
 
-        assertTrue ' fixtures/bar.component.php should exist' '[[ -e fixtures/bar.component.php ]]'
+        assertTrue " ${SCRIPT_DIR}/fixtures/bar.component.php should exist" "[[ -e ${SCRIPT_DIR}/fixtures/bar.component.php ]]"
 }
 
 test_rename_files_in_dir_non_recursive() {
         ${SCRIPT_DIR}/renex -o php -n html ${SCRIPT_DIR}/fixtures/
 
-        assertTrue '[[ -e fixtures/foo.html ]]'
-        assertTrue '[[ -e fixtures/bar.component.html ]]'
-        assertTrue '[[ -e fixtures/biz.html ]]'
-        assertTrue '[[ -e fixtures/baz.html ]]'
+        assertTrue " ${SCRIPT_DIR}/fixtures/foo.html should exist" "[[ -e ${SCRIPT_DIR}/fixtures/foo.html ]]"
+        assertTrue " ${SCRIPT_DIR}/fixtures/bar.component.html should exist" "[[ -e ${SCRIPT_DIR}/fixtures/bar.component.html ]]"
+        assertTrue " ${SCRIPT_DIR}/fixtures/biz.html should exist" "[[ -e ${SCRIPT_DIR}/fixtures/biz.html ]]"
+        assertTrue " ${SCRIPT_DIR}/fixtures/baz.html should exist" "[[ -e ${SCRIPT_DIR}/fixtures/baz.html ]]"
 }
 
 test_rename_files_recursively() {
         ${SCRIPT_DIR}/renex -r -o php -n html ${SCRIPT_DIR}/fixtures/
 
-        assertTrue ' fixtures/foo.html should exist' '[[ -e fixtures/foo.html ]]'
-        assertTrue '[[ -e fixtures/bar.component.html ]]'
-        assertTrue '[[ -e fixtures/biz.html ]]'
-        assertTrue '[[ -e fixtures/baz.html ]]'
+        assertTrue " fixtures/foo.html should exist" "[[ -e ${SCRIPT_DIR}/fixtures/foo.html ]]"
+        assertTrue "[[ -e ${SCRIPT_DIR}/fixtures/bar.component.html ]]"
+        assertTrue "[[ -e ${SCRIPT_DIR}/fixtures/biz.html ]]"
+        assertTrue "[[ -e ${SCRIPT_DIR}/fixtures/baz.html ]]"
 
-        assertFalse '[[ -e fixtures/foo.php ]]'
-        assertFalse '[[ -e fixtures/bar.php ]]'
-        assertFalse '[[ -e fixtures/biz.php ]]'
-        assertFalse '[[ -e fixtures/baz.php ]]'
+        assertFalse " ${SCRIPT_DIR}/fixtures/foo.php should not exist" "[[ -e ${SCRIPT_DIR}/fixtures/foo.php ]]"
+        assertFalse " ${SCRIPT_DIR}/fixtures/bar.php should not exist" "[[ -e ${SCRIPT_DIR}/fixtures/bar.php ]]"
+        assertFalse " ${SCRIPT_DIR}/fixtures/biz.php should not exist" "[[ -e ${SCRIPT_DIR}/fixtures/biz.php ]]"
+        assertFalse " ${SCRIPT_DIR}/fixtures/baz.php should not exist" "[[ -e ${SCRIPT_DIR}/fixtures/baz.php ]]"
 
-        assertTrue '[[ -e fixtures/level1/foo.html ]]'
-        assertTrue '[[ -e fixtures/level1/bar.html ]]'
-        assertTrue '[[ -e fixtures/level1/biz.html ]]'
-        assertTrue '[[ -e fixtures/level1/baz.html ]]'
+        assertTrue " ${SCRIPT_DIR}/fixtures/level1/foo.html should exist" "[[ -e ${SCRIPT_DIR}/fixtures/level1/foo.html ]]"
+        assertTrue " ${SCRIPT_DIR}/fixtures/level1/bar.html should exist" "[[ -e ${SCRIPT_DIR}/fixtures/level1/bar.html ]]"
+        assertTrue " ${SCRIPT_DIR}/fixtures/level1/biz.html should exist" "[[ -e ${SCRIPT_DIR}/fixtures/level1/biz.html ]]"
+        assertTrue " ${SCRIPT_DIR}/fixtures/level1/baz.html should exist" "[[ -e ${SCRIPT_DIR}/fixtures/level1/baz.html ]]"
 
-        assertFalse '[[ -e fixtures/level1/foo.php ]]'
-        assertFalse '[[ -e fixtures/level1/bar.php ]]'
-        assertFalse '[[ -e fixtures/level1/biz.php ]]'
-        assertFalse '[[ -e fixtures/level1/baz.php ]]'
+        assertFalse " ${SCRIPT_DIR}/fixtures/level1/foo.php should not exist" "[[ -e ${SCRIPT_DIR}/fixtures/level1/foo.php ]]"
+        assertFalse " ${SCRIPT_DIR}/fixtures/level1/bar.php should not exist" "[[ -e ${SCRIPT_DIR}/fixtures/level1/bar.php ]]"
+        assertFalse " ${SCRIPT_DIR}/fixtures/level1/biz.php should not exist" "[[ -e ${SCRIPT_DIR}/fixtures/level1/biz.php ]]"
+        assertFalse " ${SCRIPT_DIR}/fixtures/level1/baz.php should not exist" "[[ -e ${SCRIPT_DIR}/fixtures/level1/baz.php ]]"
 
-        assertTrue '[[ -e fixtures/level1/level2/foo.html ]]'
-        assertTrue '[[ -e fixtures/level1/level2/bar.html ]]'
-        assertTrue '[[ -e fixtures/level1/level2/biz.html ]]'
-        assertTrue '[[ -e fixtures/level1/level2/baz.html ]]'
+        assertTrue " ${SCRIPT_DIR}/fixtures/level1/level2/foo.html should exist" "[[ -e ${SCRIPT_DIR}/fixtures/level1/level2/foo.html ]]"
+        assertTrue " ${SCRIPT_DIR}/fixtures/level1/level2/bar.html should exist" "[[ -e ${SCRIPT_DIR}/fixtures/level1/level2/bar.html ]]"
+        assertTrue " ${SCRIPT_DIR}/fixtures/level1/level2/biz.html should exist" "[[ -e ${SCRIPT_DIR}/fixtures/level1/level2/biz.html ]]"
+        assertTrue " ${SCRIPT_DIR}/fixtures/level1/level2/baz.html should exist" "[[ -e ${SCRIPT_DIR}/fixtures/level1/level2/baz.html ]]"
 
-        assertFalse '[[ -e fixtures/level1/level2/foo.php ]]'
-        assertFalse '[[ -e fixtures/level1/level2/bar.php ]]'
-        assertFalse '[[ -e fixtures/level1/level2/biz.php ]]'
-        assertFalse '[[ -e fixtures/level1/level2/baz.php ]]'
+        assertFalse " ${SCRIPT_DIR}/fixtures/level1/level2/foo.php should not exist" "[[ -e ${SCRIPT_DIR}/fixtures/level1/level2/foo.php ]]"
+        assertFalse " ${SCRIPT_DIR}/fixtures/level1/level2/bar.php should not exist" "[[ -e ${SCRIPT_DIR}/fixtures/level1/level2/bar.php ]]"
+        assertFalse " ${SCRIPT_DIR}/fixtures/level1/level2/biz.php should not exist" "[[ -e ${SCRIPT_DIR}/fixtures/level1/level2/biz.php ]]"
+        assertFalse " ${SCRIPT_DIR}/fixtures/level1/level2/baz.php should not exist" "[[ -e ${SCRIPT_DIR}/fixtures/level1/level2/baz.php ]]"
 }
 
 test_handle_relative_dirs() {
-        cd ${SCRIPT_DIR}/fixtures || exit 1
-        ${SCRIPT_DIR}/renex -r -o php -n html ./ || exit 1
-        cd ${SCRIPT_DIR} || exit 1
+        ( cd ${SCRIPT_DIR}/fixtures && ${SCRIPT_DIR}/renex -r -o php -n html ./ && cd ${SCRIPT_DIR} ) || exit 1
 
-        assertTrue ' fixtures/foo.html should exist' '[[ -e fixtures/foo.html ]]'
-        assertTrue '[[ -e fixtures/bar.component.html ]]'
-        assertTrue '[[ -e fixtures/biz.html ]]'
-        assertTrue '[[ -e fixtures/baz.html ]]'
+        assertTrue " ${SCRIPT_DIR}/fixtures/foo.html should exist" "[[ -e ${SCRIPT_DIR}/fixtures/foo.html ]]"
+        assertTrue " ${SCRIPT_DIR}/fixtures/bar.component.html should exist" "[[ -e ${SCRIPT_DIR}/fixtures/bar.component.html ]]"
+        assertTrue " ${SCRIPT_DIR}/fixtures/biz.html should exist" "[[ -e ${SCRIPT_DIR}/fixtures/biz.html ]]"
+        assertTrue " ${SCRIPT_DIR}/fixtures/baz.html should exist" "[[ -e ${SCRIPT_DIR}/fixtures/baz.html ]]"
 
-        assertFalse '[[ -e fixtures/foo.php ]]'
-        assertFalse '[[ -e fixtures/bar.php ]]'
-        assertFalse '[[ -e fixtures/biz.php ]]'
-        assertFalse '[[ -e fixtures/baz.php ]]'
+        assertFalse " ${SCRIPT_DIR}/fixtures/foo.php should not exist" "[[ -e ${SCRIPT_DIR}/fixtures/foo.php ]]"
+        assertFalse " ${SCRIPT_DIR}/fixtures/bar.php should not exist" "[[ -e ${SCRIPT_DIR}/fixtures/bar.php ]]"
+        assertFalse " ${SCRIPT_DIR}/fixtures/biz.php should not exist" "[[ -e ${SCRIPT_DIR}/fixtures/biz.php ]]"
+        assertFalse " ${SCRIPT_DIR}/fixtures/baz.php should not exist" "[[ -e ${SCRIPT_DIR}/fixtures/baz.php ]]"
 
-        assertTrue '[[ -e fixtures/level1/foo.html ]]'
-        assertTrue '[[ -e fixtures/level1/bar.html ]]'
-        assertTrue '[[ -e fixtures/level1/biz.html ]]'
-        assertTrue '[[ -e fixtures/level1/baz.html ]]'
+        assertTrue " ${SCRIPT_DIR}/fixtures/level1/foo.html should exist" "[[ -e ${SCRIPT_DIR}/fixtures/level1/foo.html ]]"
+        assertTrue " ${SCRIPT_DIR}/fixtures/level1/bar.html should exist" "[[ -e ${SCRIPT_DIR}/fixtures/level1/bar.html ]]"
+        assertTrue " ${SCRIPT_DIR}/fixtures/level1/biz.html should exist" "[[ -e ${SCRIPT_DIR}/fixtures/level1/biz.html ]]"
+        assertTrue " ${SCRIPT_DIR}/fixtures/level1/baz.html should exist" "[[ -e ${SCRIPT_DIR}/fixtures/level1/baz.html ]]"
 
-        assertFalse '[[ -e fixtures/level1/foo.php ]]'
-        assertFalse '[[ -e fixtures/level1/bar.php ]]'
-        assertFalse '[[ -e fixtures/level1/biz.php ]]'
-        assertFalse '[[ -e fixtures/level1/baz.php ]]'
+        assertFalse " ${SCRIPT_DIR}/fixtures/level1/foo.php should not exist" "[[ -e ${SCRIPT_DIR}/fixtures/level1/foo.php ]]"
+        assertFalse " ${SCRIPT_DIR}/fixtures/level1/bar.php should not exist" "[[ -e ${SCRIPT_DIR}/fixtures/level1/bar.php ]]"
+        assertFalse " ${SCRIPT_DIR}/fixtures/level1/biz.php should not exist" "[[ -e ${SCRIPT_DIR}/fixtures/level1/biz.php ]]"
+        assertFalse " ${SCRIPT_DIR}/fixtures/level1/baz.php should not exist" "[[ -e ${SCRIPT_DIR}/fixtures/level1/baz.php ]]"
 
-        assertTrue '[[ -e fixtures/level1/level2/foo.html ]]'
-        assertTrue '[[ -e fixtures/level1/level2/bar.html ]]'
-        assertTrue '[[ -e fixtures/level1/level2/biz.html ]]'
-        assertTrue '[[ -e fixtures/level1/level2/baz.html ]]'
+        assertTrue " ${SCRIPT_DIR}/fixtures/level1/level2/foo.html should exist" "[[ -e ${SCRIPT_DIR}/fixtures/level1/level2/foo.html ]]"
+        assertTrue " ${SCRIPT_DIR}/fixtures/level1/level2/bar.html should exist" "[[ -e ${SCRIPT_DIR}/fixtures/level1/level2/bar.html ]]"
+        assertTrue " ${SCRIPT_DIR}/fixtures/level1/level2/biz.html should exist" "[[ -e ${SCRIPT_DIR}/fixtures/level1/level2/biz.html ]]"
+        assertTrue " ${SCRIPT_DIR}/fixtures/level1/level2/baz.html should exist" "[[ -e ${SCRIPT_DIR}/fixtures/level1/level2/baz.html ]]"
 
-        assertFalse '[[ -e fixtures/level1/level2/foo.php ]]'
-        assertFalse '[[ -e fixtures/level1/level2/bar.php ]]'
-        assertFalse '[[ -e fixtures/level1/level2/biz.php ]]'
-        assertFalse '[[ -e fixtures/level1/level2/baz.php ]]'
+        assertFalse " ${SCRIPT_DIR}/fixtures/level1/level2/foo.php should not exist" "[[ -e ${SCRIPT_DIR}/fixtures/level1/level2/foo.php ]]"
+        assertFalse " ${SCRIPT_DIR}/fixtures/level1/level2/bar.php should not exist" "[[ -e ${SCRIPT_DIR}/fixtures/level1/level2/bar.php ]]"
+        assertFalse " ${SCRIPT_DIR}/fixtures/level1/level2/biz.php should not exist" "[[ -e ${SCRIPT_DIR}/fixtures/level1/level2/biz.php ]]"
+        assertFalse " ${SCRIPT_DIR}/fixtures/level1/level2/baz.php should not exist" "[[ -e ${SCRIPT_DIR}/fixtures/level1/level2/baz.php ]]"
 }
