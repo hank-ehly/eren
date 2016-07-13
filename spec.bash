@@ -66,10 +66,10 @@ test_rename_files_in_dir_non_recursive() {
 test_rename_files_recursively() {
         ${SCRIPT_DIR}/renex -r -o php -n html ${SCRIPT_DIR}/fixtures/
 
-        assertTrue " fixtures/foo.html should exist" "[[ -e ${SCRIPT_DIR}/fixtures/foo.html ]]"
-        assertTrue "[[ -e ${SCRIPT_DIR}/fixtures/bar.component.html ]]"
-        assertTrue "[[ -e ${SCRIPT_DIR}/fixtures/biz.html ]]"
-        assertTrue "[[ -e ${SCRIPT_DIR}/fixtures/baz.html ]]"
+        assertTrue " ${SCRIPT_DIR}/fixtures/foo.html should exist" "[[ -e ${SCRIPT_DIR}/fixtures/foo.html ]]"
+        assertTrue " ${SCRIPT_DIR}/fixtures/bar.component.html should exist" "[[ -e ${SCRIPT_DIR}/fixtures/bar.component.html ]]"
+        assertTrue " ${SCRIPT_DIR}/fixtures/biz.html should exist" "[[ -e ${SCRIPT_DIR}/fixtures/biz.html ]]"
+        assertTrue " ${SCRIPT_DIR}/fixtures/baz.html should exist" "[[ -e ${SCRIPT_DIR}/fixtures/baz.html ]]"
 
         assertFalse " ${SCRIPT_DIR}/fixtures/foo.php should not exist" "[[ -e ${SCRIPT_DIR}/fixtures/foo.php ]]"
         assertFalse " ${SCRIPT_DIR}/fixtures/bar.php should not exist" "[[ -e ${SCRIPT_DIR}/fixtures/bar.php ]]"
