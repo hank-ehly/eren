@@ -10,7 +10,7 @@ clean_fixtures() {
 generate_fixtures() {
         mkdir fixtures
         touch fixtures/foo.php
-        touch fixtures/bar.php
+        touch fixtures/bar.component.php
         touch fixtures/biz.html
         touch fixtures/baz.html
 
@@ -42,33 +42,23 @@ test_rename_single_file() {
         assertTrue '[[ -e fixtures/foo.html ]]'
         assertFalse '[[ -e fixtures/foo.php ]]'
 
-        assertTrue '[[ -e fixtures/bar.php ]]'
+        assertTrue '[[ -e fixtures/bar.component.php ]]'
 }
 
 test_rename_files_in_dir_non_recursive() {
         ./renex -v -o php -n html fixtures/
 
         assertTrue '[[ -e fixtures/foo.html ]]'
-        assertTrue '[[ -e fixtures/bar.html ]]'
+        assertTrue '[[ -e fixtures/bar.component.html ]]'
         assertTrue '[[ -e fixtures/biz.html ]]'
         assertTrue '[[ -e fixtures/baz.html ]]'
-
-        assertFalse '[[ -e fixtures/foo.php ]]'
-        assertFalse '[[ -e fixtures/bar.php ]]'
-        assertFalse '[[ -e fixtures/biz.php ]]'
-        assertFalse '[[ -e fixtures/baz.php ]]'
-
-        assertTrue '[[ -e fixtures/level1/foo.php ]]'
-        assertTrue '[[ -e fixtures/level1/bar.php ]]'
-        assertTrue '[[ -e fixtures/level1/biz.html ]]'
-        assertTrue '[[ -e fixtures/level1/baz.html ]]'
 }
 
 test_rename_files_recursively() {
         ./renex -vr -o php -n html fixtures/
 
         assertTrue '[[ -e fixtures/foo.html ]]'
-        assertTrue '[[ -e fixtures/bar.html ]]'
+        assertTrue '[[ -e fixtures/bar.component.html ]]'
         assertTrue '[[ -e fixtures/biz.html ]]'
         assertTrue '[[ -e fixtures/baz.html ]]'
 
@@ -102,7 +92,7 @@ test_handle_relative_dirs() {
         cd fixtures && ../renex -vr -o php -n html ./ && cd ..
 
         assertTrue '[[ -e fixtures/foo.html ]]'
-        assertTrue '[[ -e fixtures/bar.html ]]'
+        assertTrue '[[ -e fixtures/bar.component.html ]]'
         assertTrue '[[ -e fixtures/biz.html ]]'
         assertTrue '[[ -e fixtures/baz.html ]]'
 
