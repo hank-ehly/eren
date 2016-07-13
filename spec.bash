@@ -18,23 +18,22 @@ clean_fixtures() {
 }
 
 generate_fixtures() {
-        mkdir fixtures
-        touch fixtures/foo.php
-        touch fixtures/bar.component.php
-        touch fixtures/biz.html
-        touch fixtures/baz.html
+        mkdir -p ${SCRIPT_DIR}/fixtures/level1/level2
 
-        mkdir fixtures/level1
-        touch fixtures/level1/foo.php
-        touch fixtures/level1/bar.php
-        touch fixtures/level1/biz.html
-        touch fixtures/level1/baz.html
+        touch ${SCRIPT_DIR}/fixtures/foo.php
+        touch ${SCRIPT_DIR}/fixtures/bar.component.php
+        touch ${SCRIPT_DIR}/fixtures/biz.html
+        touch ${SCRIPT_DIR}/fixtures/baz.html
 
-        mkdir fixtures/level1/level2
-        touch fixtures/level1/level2/foo.php
-        touch fixtures/level1/level2/bar.php
-        touch fixtures/level1/level2/biz.html
-        touch fixtures/level1/level2/baz.html
+        touch ${SCRIPT_DIR}/fixtures/level1/foo.php
+        touch ${SCRIPT_DIR}/fixtures/level1/bar.php
+        touch ${SCRIPT_DIR}/fixtures/level1/biz.html
+        touch ${SCRIPT_DIR}/fixtures/level1/baz.html
+
+        touch ${SCRIPT_DIR}/fixtures/level1/level2/foo.php
+        touch ${SCRIPT_DIR}/fixtures/level1/level2/bar.php
+        touch ${SCRIPT_DIR}/fixtures/level1/level2/biz.html
+        touch ${SCRIPT_DIR}/fixtures/level1/level2/baz.html
 }
 
 setUp() {
@@ -47,16 +46,16 @@ tearDown() {
 }
 
 test_rename_single_file() {
-        ${SCRIPT_DIR}/renex -v -o php -n html fixtures/foo.php
+        ${SCRIPT_DIR}/renex -o php -n html ${SCRIPT_DIR}/fixtures/foo.php
 
-        assertTrue '[[ -e fixtures/foo.html ]]'
-        assertFalse '[[ -e fixtures/foo.php ]]'
+        assertTrue ' fixtures/foo.html should exist' '[[ -e fixtures/foo.html ]]'
+        assertFalse ' fixtures/foo.php should not exist' '[[ -e fixtures/foo.php ]]'
 
-        assertTrue '[[ -e fixtures/bar.component.php ]]'
+        assertTrue ' fixtures/bar.component.php should exist' '[[ -e fixtures/bar.component.php ]]'
 }
 
 test_rename_files_in_dir_non_recursive() {
-        ${SCRIPT_DIR}/renex -v -o php -n html fixtures/
+        ${SCRIPT_DIR}/renex -o php -n html ${SCRIPT_DIR}/fixtures/
 
         assertTrue '[[ -e fixtures/foo.html ]]'
         assertTrue '[[ -e fixtures/bar.component.html ]]'
@@ -65,9 +64,9 @@ test_rename_files_in_dir_non_recursive() {
 }
 
 test_rename_files_recursively() {
-        ${SCRIPT_DIR}/renex -vr -o php -n html fixtures/
+        ${SCRIPT_DIR}/renex -r -o php -n html ${SCRIPT_DIR}/fixtures/
 
-        assertTrue '[[ -e fixtures/foo.html ]]'
+        assertTrue ' fixtures/foo.html should exist' '[[ -e fixtures/foo.html ]]'
         assertTrue '[[ -e fixtures/bar.component.html ]]'
         assertTrue '[[ -e fixtures/biz.html ]]'
         assertTrue '[[ -e fixtures/baz.html ]]'
@@ -99,9 +98,11 @@ test_rename_files_recursively() {
 }
 
 test_handle_relative_dirs() {
-        cd ${SCRIPT_DIR}/fixtures && ${SCRIPT_DIR}/renex -vr -o php -n html ./ && cd ${SCRIPT_DIR}
+        cd ${SCRIPT_DIR}/fixtures || exit 1
+        ${SCRIPT_DIR}/renex -r -o php -n html ./ || exit 1
+        cd ${SCRIPT_DIR} || exit 1
 
-        assertTrue '[[ -e fixtures/foo.html ]]'
+        assertTrue ' fixtures/foo.html should exist' '[[ -e fixtures/foo.html ]]'
         assertTrue '[[ -e fixtures/bar.component.html ]]'
         assertTrue '[[ -e fixtures/biz.html ]]'
         assertTrue '[[ -e fixtures/baz.html ]]'
