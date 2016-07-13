@@ -149,16 +149,11 @@ renex() {
                                 fi
                         done
                 else
-                        if [[ $(ls -A ${ABS_PATH} | wc -l) -eq 0 ]]
-                        then
-                            error "No files with the extension '${3}' were found in ${ABS_PATH}"
-                        else
-                                for file in ${ABS_PATH}/*.${1}
-                                do
-                                        debug "mv ${file} ${file%.*}.html"
-                                        mv ${file} ${file%.*}.${2}
-                                done
-                        fi
+                        for file in ${ABS_PATH}/*.${1}
+                        do
+                                debug "mv ${file} ${file%.*}.html"
+                                mv ${file} ${file%.*}.${2}
+                        done
                 fi
         elif [[ -f ${3} ]]
         then
