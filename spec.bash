@@ -1,5 +1,15 @@
 #!/usr/bin/env bash
 
+if [[ -z ${SCRIPT_DIR} ]]
+then
+        SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
+        if [[ -L ${SCRIPT_DIR}/renex ]]
+        then
+                SCRIPT_DIR=$(dirname `readlink ${SCRIPT_DIR}/renex`)
+        fi
+fi
+
 clean_fixtures() {
         if [[ -d fixtures ]]
         then
@@ -37,7 +47,7 @@ tearDown() {
 }
 
 test_rename_single_file() {
-        ./renex -v -o php -n html fixtures/foo.php
+        ${SCRIPT_DIR}/renex -v -o php -n html fixtures/foo.php
 
         assertTrue '[[ -e fixtures/foo.html ]]'
         assertFalse '[[ -e fixtures/foo.php ]]'
@@ -46,7 +56,7 @@ test_rename_single_file() {
 }
 
 test_rename_files_in_dir_non_recursive() {
-        ./renex -v -o php -n html fixtures/
+        ${SCRIPT_DIR}/renex -v -o php -n html fixtures/
 
         assertTrue '[[ -e fixtures/foo.html ]]'
         assertTrue '[[ -e fixtures/bar.component.html ]]'
@@ -55,7 +65,7 @@ test_rename_files_in_dir_non_recursive() {
 }
 
 test_rename_files_recursively() {
-        ./renex -vr -o php -n html fixtures/
+        ${SCRIPT_DIR}/renex -vr -o php -n html fixtures/
 
         assertTrue '[[ -e fixtures/foo.html ]]'
         assertTrue '[[ -e fixtures/bar.component.html ]]'
@@ -89,7 +99,7 @@ test_rename_files_recursively() {
 }
 
 test_handle_relative_dirs() {
-        cd fixtures && ../renex -vr -o php -n html ./ && cd ..
+        cd ${SCRIPT_DIR}/fixtures && ${SCRIPT_DIR}/renex -vr -o php -n html ./ && cd ${SCRIPT_DIR}
 
         assertTrue '[[ -e fixtures/foo.html ]]'
         assertTrue '[[ -e fixtures/bar.component.html ]]'

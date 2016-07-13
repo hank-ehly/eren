@@ -123,8 +123,8 @@ run_shunit2() {
                                 ;;
                 esac
         else
-                debug "bash ${SCRIPT_DIR}/vendor/${SHUNIT2_DIRNAME}/src/shunit2 ${SCRIPT_DIR}/spec.sh"
-                bash ${SCRIPT_DIR}/vendor/${SHUNIT2_DIRNAME}/src/shunit2 "${SCRIPT_DIR}/spec.sh"
+                debug "bash ${SCRIPT_DIR}/vendor/${SHUNIT2_DIRNAME}/src/shunit2 ${SCRIPT_DIR}/spec.bash"
+                bash ${SCRIPT_DIR}/vendor/${SHUNIT2_DIRNAME}/src/shunit2 "${SCRIPT_DIR}/spec.bash"
         fi
 }
 
