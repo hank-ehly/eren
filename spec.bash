@@ -20,20 +20,8 @@ clean_fixtures() {
 generate_fixtures() {
         mkdir -p ${SCRIPT_DIR}/fixtures/level1/level2
 
-        touch ${SCRIPT_DIR}/fixtures/foo.php
-        touch ${SCRIPT_DIR}/fixtures/bar.component.php
-        touch ${SCRIPT_DIR}/fixtures/biz.html
-        touch ${SCRIPT_DIR}/fixtures/baz.html
-
-        touch ${SCRIPT_DIR}/fixtures/level1/foo.php
-        touch ${SCRIPT_DIR}/fixtures/level1/bar.php
-        touch ${SCRIPT_DIR}/fixtures/level1/biz.html
-        touch ${SCRIPT_DIR}/fixtures/level1/baz.html
-
-        touch ${SCRIPT_DIR}/fixtures/level1/level2/foo.php
-        touch ${SCRIPT_DIR}/fixtures/level1/level2/bar.php
-        touch ${SCRIPT_DIR}/fixtures/level1/level2/biz.html
-        touch ${SCRIPT_DIR}/fixtures/level1/level2/baz.html
+        touch ${SCRIPT_DIR}/fixtures/{,level1/{,level2/}}{{foo,bar}.php,{biz,baz}.html}
+        mv ${SCRIPT_DIR}/fixtures/bar{,.component}.php
 }
 
 setUp() {
