@@ -1,13 +1,11 @@
 #!/usr/bin/env bash
 
-if [[ -z ${SCRIPT_DIR} ]]
-then
-        SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
-        if [[ -L ${SCRIPT_DIR}/renex ]]
-        then
-                SCRIPT_DIR=$(dirname `readlink ${SCRIPT_DIR}/renex`)
-        fi
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
+if [[ -L ${SCRIPT_DIR}/renex ]]
+then
+        SCRIPT_DIR=$(dirname `readlink ${SCRIPT_DIR}/renex`)
 fi
 
 clean_fixtures() {
@@ -17,6 +15,23 @@ clean_fixtures() {
         fi
 }
 
+# Generates the following folder structure for testing
+#
+# fixtures/
+# ├── bar.component.php
+# ├── baz.html
+# ├── biz.html
+# ├── foo.php
+# └── level1
+#     ├── bar.php
+#     ├── baz.html
+#     ├── biz.html
+#     ├── foo.php
+#     └── level2
+#         ├── bar.php
+#         ├── baz.html
+#         ├── biz.html
+#         └── foo.php
 generate_fixtures() {
         mkdir -p ${SCRIPT_DIR}/fixtures/level1/level2
 
@@ -26,7 +41,6 @@ generate_fixtures() {
 
 setUp() {
         clean_fixtures
-        generate_fixtures
 }
 
 tearDown() {
@@ -34,6 +48,7 @@ tearDown() {
 }
 
 test_rename_single_file() {
+        generate_fixtures
         ${SCRIPT_DIR}/renex -o php -n html ${SCRIPT_DIR}/fixtures/foo.php
 
         assertTrue " ${SCRIPT_DIR}/fixtures/foo.html should exist" "[[ -e ${SCRIPT_DIR}/fixtures/foo.html ]]"
@@ -43,6 +58,7 @@ test_rename_single_file() {
 }
 
 test_rename_files_in_dir_non_recursive() {
+        generate_fixtures
         ${SCRIPT_DIR}/renex -o php -n html ${SCRIPT_DIR}/fixtures/
 
         assertTrue " ${SCRIPT_DIR}/fixtures/foo.html should exist" "[[ -e ${SCRIPT_DIR}/fixtures/foo.html ]]"
@@ -52,6 +68,7 @@ test_rename_files_in_dir_non_recursive() {
 }
 
 test_rename_files_recursively() {
+        generate_fixtures
         ${SCRIPT_DIR}/renex -r -o php -n html ${SCRIPT_DIR}/fixtures/
 
         assertTrue " ${SCRIPT_DIR}/fixtures/foo.html should exist" "[[ -e ${SCRIPT_DIR}/fixtures/foo.html ]]"
@@ -86,6 +103,7 @@ test_rename_files_recursively() {
 }
 
 test_handle_relative_dirs() {
+        generate_fixtures
         ( cd ${SCRIPT_DIR}/fixtures && ${SCRIPT_DIR}/renex -r -o php -n html ./ && cd ${SCRIPT_DIR} ) || exit 1
 
         assertTrue " ${SCRIPT_DIR}/fixtures/foo.html should exist" "[[ -e ${SCRIPT_DIR}/fixtures/foo.html ]]"
@@ -118,3 +136,17 @@ test_handle_relative_dirs() {
         assertFalse " ${SCRIPT_DIR}/fixtures/level1/level2/biz.php should not exist" "[[ -e ${SCRIPT_DIR}/fixtures/level1/level2/biz.php ]]"
         assertFalse " ${SCRIPT_DIR}/fixtures/level1/level2/baz.php should not exist" "[[ -e ${SCRIPT_DIR}/fixtures/level1/level2/baz.php ]]"
 }
+
+test_handle_files_containing_spaces() {
+        mkdir -p ${SCRIPT_DIR}/fixtures/level1/level2
+
+        touch ${SCRIPT_DIR}/fixtures/{,level1/{,level2/}}{{foo\ space,bar}.php,{biz\ space,baz}.html}
+        mv ${SCRIPT_DIR}/fixtures/bar{,.component}.php
+
+        ${SCRIPT_DIR}/renex -r -o php -n html ${SCRIPT_DIR}/fixtures/
+
+        assertTrue " ${SCRIPT_DIR}/fixtures/foo\ space.html should exist"               "[[ -e ${SCRIPT_DIR}/fixtures/foo\ space.html ]]"
+        assertTrue " ${SCRIPT_DIR}/fixtures/level1/foo\ space.html should exist"        "[[ -e ${SCRIPT_DIR}/fixtures/level1/foo\ space.html ]]"
+        assertTrue " ${SCRIPT_DIR}/fixtures/level1/level2/foo\ space.html should exist" "[[ -e ${SCRIPT_DIR}/fixtures/level1/level2/foo\ space.html ]]"
+}
+

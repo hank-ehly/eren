@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+set -eu
+
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 if [[ -L ${SCRIPT_DIR}/renex ]]
@@ -143,7 +145,7 @@ renex() {
                                 elif echo ${file} | grep ".${1}" >/dev/null
                                 then
                                         debug "mv ${file} ${file%.*}.${2}"
-                                        mv ${file} ${file%.*}.${2}
+                                        mv "${file}" "${file%.*}.${2}"
                                 else
                                         debug "Skipping ${file}"
                                 fi
@@ -152,14 +154,14 @@ renex() {
                         for file in ${ABS_PATH}/*.${1}
                         do
                                 debug "mv ${file} ${file%.*}.${2}"
-                                mv ${file} ${file%.*}.${2}
+                                mv "${file}" "${file%.*}.${2}"
                         done
                 fi
         elif [[ -f ${3} ]]
         then
                 local ABS_PATH="$(cd `dirname ${3}` && pwd)/$(basename ${3})"
                 debug "mv ${ABS_PATH} ${ABS_PATH%.*}.${2}"
-                mv ${ABS_PATH} ${ABS_PATH%.*}.${2}
+                mv "${ABS_PATH}" "${ABS_PATH%.*}.${2}"
         fi
 }
 
@@ -215,3 +217,4 @@ if [[ ! -z ${oarg} ]] && [[ ! -z ${narg} ]] && [[ -e ${1} ]]
 then
         renex ${oarg} ${narg} ${1}
 fi
+
