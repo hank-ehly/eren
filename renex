@@ -142,23 +142,23 @@ renex() {
                                         renex ${1} ${2} ${file}
                                 elif echo ${file} | grep ".${1}" >/dev/null
                                 then
-                                        debug "mv ${file} ${file%.*}.html"
+                                        debug "mv ${file} ${file%.*}.${2}"
                                         mv ${file} ${file%.*}.${2}
                                 else
-                                        debug "Skipped ${file}"
+                                        debug "Skipping ${file}"
                                 fi
                         done
                 else
                         for file in ${ABS_PATH}/*.${1}
                         do
-                                debug "mv ${file} ${file%.*}.html"
+                                debug "mv ${file} ${file%.*}.${2}"
                                 mv ${file} ${file%.*}.${2}
                         done
                 fi
         elif [[ -f ${3} ]]
         then
                 local ABS_PATH="$(cd `dirname ${3}` && pwd)/$(basename ${3})"
-                debug "mv ${ABS_PATH} ${ABS_PATH%.*}.html"
+                debug "mv ${ABS_PATH} ${ABS_PATH%.*}.${2}"
                 mv ${ABS_PATH} ${ABS_PATH%.*}.${2}
         fi
 }
